@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Quiz</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div id="outer_container">
+      <h2>Multiple Choice Quiz</h2>
+      <div id="quiz_questions_container">
+
+      </div>
+    </div>
+    <script>
+const questions = [
+  {
+    id: 1,
+    description: "Who is the author of <cite>The Hitchhiker's Guide to the Galaxy</cite>?",
+    options: ['Dan Simmons', 'Douglas Adams', 'Stephen Fry', 'Robert A. Heinlein'],
+  },
+  {
+    id: 2,
+    description: 'Which of the following numbers is the answer to Life, the \
+                  Universe and Everything?',
+    options: ['66', '13', '111', '42'],
+  },
+  {
+    id: 3,
+    description: 'What is Pan Galactic Gargle Blaster?',
+    options: ['A drink', 'A machine', 'A creature', 'None of the above'],
+  },
+  {
+    id: 4,
+    description: 'Which star system does Ford Prefect belong to?',
+    options: ['Aldebaran', 'Algol', 'Betelgeuse', 'Alpha Centauri'],
+  },
+];
+
+const answerKey = { '1': 'Douglas Adams', '2': '42', '3': 'A drink', '4': 'Betelgeuse' };
+
+
+document.addEventListener("DOMContentLoaded", event => {
+  createPageElements();
+
+  const quizForm = document.getElementById("quiz_form");
+  const submitButton = document.getElementsByClassName('btn submit')[0];
+
+
+  submitButton.addEventListener("click", event => {
+    event.preventDefault();
+    const radioButtonsValuesObj = getRadioButtonValuesObj(quizForm);
+    const resetQuizButton = document.getElementsByClassName('btn reset')[0];
+    resetQuizButton.removeAttribute('disabled');
+
+    submitButton.setAttribute('disabled', true);
+    submitButton.classList.add('disabled');
+
+    questions.forEach(question => {
+
+      const resultElement = document.createElement('p');
+      resultElement.classList.add('user-answer');
+      let resultElementText = '';
+      const correctAnswer = answerKey[question.id];
+      
+      const parentDiv = document.querySelector(`[data-id="${question.id}"]`);
+      
+      if (radioButtonsValuesObj.hasOwnProperty(question.id)) {
+        
+        if (correctAnswer === radioButtonsValuesObj[question.id]) {
+          resultElement.classList.add('correct');
+          resultElementText = 'Correct Answer';
+          
+        } else {
+          resultElement.classList.add('incorrect');
+          resultElementText = `Wrong Answer. The correct answer is: "${correctAnswer}".`;
+        }
+        
+      } else {
+        resultElement.classList.add('incorrect');
+        resultElementText = `You didn't not answer this question. Correct answer is: "${correctAnswer}".`
+      }
+
+      parentDiv.style.margin = "0px";
+      resultElement.textContent = resultElementText;
+      parentDiv.appendChild(resultElement);
+    })
+  });
+});
+
+const createPageElements = () => {
+  const questionsOuterContainer = document.getElementById("quiz_questions_container");
+
+const fieldsetElement = document.createElement('fieldset');
+const form = document.createElement('form');
+form.setAttribute("id", "quiz_form");
+    for (let index = 0; index < questions.length; index++) {
+      const questionDiv = createQuestionDiv(index);
+      const questionParagraph = createQuestionParagraph(index, questions[index].description);
+      questionDiv.appendChild(questionParagraph);
+
+      questions[index].options.forEach(option => {
+        const optionWrapper = createOptionWrapperElement();
+        const radioButton = createRadioButton(option, index);
+        const label = createLabel(option);
+
+        optionWrapper.appendChild(radioButton);
+        optionWrapper.appendChild(label);
+        questionDiv.appendChild(optionWrapper);
+    });
+    fieldsetElement.appendChild(questionDiv);
+  }
+
+  const submitButton = createButton('submit', 'Submit Quiz', ['btn', 'submit']);
+  const resetButton = createButton('submit', 'Reset', ['btn', 'reset']);
+  resetButton.setAttribute('disabled', true);
+  
+  form.appendChild(fieldsetElement);
+  form.appendChild(submitButton);
+  form.appendChild(resetButton);
+  questionsOuterContainer.appendChild(form);
+  };
+
+  const createButton = (typeAttr, valueAttr, classNameArr) => {
+    const button = document.createElement('input');
+    button.setAttribute('type', typeAttr);
+    button.setAttribute('value', valueAttr);
+    classNameArr.forEach(cls => button.classList.add(cls));
+    return button;
+  }
+
+  const createRadioButton = (answerOption, indx) => {
+    const radioBtn = document.createElement('input');
+    radioBtn.setAttribute("type", "radio");
+    radioBtn.setAttribute("id", "radio");
+    radioBtn.setAttribute("name", indx + 1);
+    radioBtn.setAttribute("value", answerOption);
+    return radioBtn;
+  }
+
+  const createLabel = (answerOption) => {
+    const labelElement = document.createElement('label');
+    labelElement.setAttribute("for", "radio");
+    labelElement.textContent = answerOption;
+    return labelElement;
+  }
+
+  const createQuestionParagraph = (indx, description) => {
+    const questionParagraphElement = document.createElement('p');
+    questionParagraphElement.innerHTML = `Q${indx + 1}. ${description}`;
+    questionParagraphElement.classList.add("description");
+    return questionParagraphElement;
+  }
+
+  const createQuestionDiv = (indx) => {
+    const questionDivElement = document.createElement('div');
+    questionDivElement.setAttribute("data-id", indx + 1);
+    questionDivElement.classList.add("question");
+    return questionDivElement;
+  }
+
+  const createOptionWrapperElement = () => {
+    const optionWrapper = document.createElement('span');
+    optionWrapper.classList.add('optionWrapper');
+    return optionWrapper;
+  }
+
+  const getRadioButtonValuesObj = (form) => {
+    const data = new FormData(form);
+    let radioButtonValues = {};
+    for (const entry of data) {
+      radioButtonValues[entry[0]] = entry[1];
+    };
+
+    return radioButtonValues;
+  }
+    </script>
+  </body>
+</html>
