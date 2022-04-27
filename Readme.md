@@ -8,6 +8,10 @@
 
 ### Multiple choice quiz
 
+
 - Once the user picks the answers to the specified questions and clicks **submit**, the app displays whether each answer is correct, incorrect or missing;
 
 Deployed [here](https://multiplechoice-quiz.herokuapp.com/home.html)
+
+
+![quiz](https://user-images.githubusercontent.com/41551585/165633156-29b3767f-cbea-43d1-a8d0-50e26c7ef164.gif)
